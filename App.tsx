@@ -7,7 +7,7 @@
  *
  * @format
  */
-import {
+ import {
   ApolloClient,
   InMemoryCache,
   gql,
@@ -26,6 +26,7 @@ import {
   View,
   Image,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 
 import {Colors, ReloadInstructions} from 'react-native/Libraries/NewAppScreen';
@@ -65,6 +66,29 @@ const App = () => {
   const [data, setData] = useState<any>([]);
   const [error, setError] = useState(null);
   const [fullData, setFullData] = useState<any>([]);
+  const [search, setSearch] = useState('');
+
+  function renderHeader() {
+    return (
+      <View
+        style={{
+          backgroundColor: '#fff',
+          padding: 10,
+          marginVertical: 10,
+          borderRadius: 20,
+        }}>
+        <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          clearButtonMode="always"
+          // value={search}
+          onChangeText={queryText => setSearch(queryText)}
+          placeholder="Search"
+          style={{backgroundColor: '#000', paddingHorizontal: 20}}
+        />
+      </View>
+    );
+  }
 
   const client = new ApolloClient({
     uri: 'https://api.graphql.jobs/graphql',
@@ -158,7 +182,7 @@ const App = () => {
             style={{
               backgroundColor: isDarkMode ? Colors.lighter : Colors.white,
             }}>
-            <FlatListComponent data={data} />
+            <FlatListComponent data={data} renderHeader={renderHeader} />
           </View>
           {/* </ScrollView> */}
         </SafeAreaView>
@@ -166,6 +190,7 @@ const App = () => {
     );
   }
 };
+
 const styles = StyleSheet.create({
   // sectionContainer: {
   //   marginTop: 32,

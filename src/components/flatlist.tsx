@@ -1,6 +1,5 @@
-import {gql, useQuery} from '@apollo/client';
 import React from 'react';
-import {StyleSheet, Text, View, FlatList, Image} from 'react-native';
+import {StyleSheet, Text, View, FlatList, Image, TextInput} from 'react-native';
 
 const sample: any = [
   {id: '1', title: 'First item'},
@@ -20,14 +19,12 @@ export const FlatListComponent: React.FC<{data: any}> = ({data}) => {
   //   `;
 
   //   const {data}: any = useQuery(GET_JOBS);
-  const sub = data;
-
-  console.log(data);
+  //   const sub = data;
 
   return (
     <FlatList
       nestedScrollEnabled
-      data={sub}
+      data={data}z
       keyExtractor={item => item.id}
       renderItem={({item}) => (
         <View style={styles.listItem}>

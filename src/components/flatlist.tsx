@@ -10,19 +10,19 @@ const sample: any = [
 ];
 
 export const FlatListComponent: React.FC<{data: any}> = ({data}) => {
-  const GET_JOBS = gql`
-    query jobs {
-      jobs {
-        id
-        title
-      }
-    }
-  `;
+  //   const GET_JOBS = gql`
+  //     query jobs {
+  //       jobs {
+  //         id
+  //         title
+  //       }
+  //     }
+  //   `;
 
   //   const {data}: any = useQuery(GET_JOBS);
   const sub = data;
 
-    console.log(data);
+  console.log(data);
 
   return (
     <FlatList

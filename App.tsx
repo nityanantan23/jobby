@@ -88,7 +88,7 @@ const App = () => {
       .then<any>(response => response)
       .then(response => {
         setData(response?.data.jobs);
-        setFullData(response);
+        setFullData(response?.data.jobs);
         setIsLoading(false);
         // console.log(data);
       })
@@ -122,27 +122,50 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.lighter : Colors.lighter,
   };
 
-  return (
-    <ApolloProvider client={client}>
-      <SafeAreaView style={backgroundStyle}>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <Text style={styles.text}>Favorite Contacts</Text>
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: Colors.white,
+        }}>
+        <ActivityIndicator size="large" color="#5500dc" />
+      </View>
+    );
+  }
 
-        {/* <ScrollView
+  if (error) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: 18}}>
+          Error fetching data... Check your network connection!
+        </Text>
+      </View>
+    );
+  } else {
+    return (
+      <ApolloProvider client={client}>
+        <SafeAreaView style={backgroundStyle}>
+          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+          <Text style={styles.text}>Favorite Contacts</Text>
+
+          {/* <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={backgroundStyle}> */}
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.lighter : Colors.white,
-          }}>
-          <FlatListComponent data={data} />
-        </View>
-        {/* </ScrollView> */}
-      </SafeAreaView>
-    </ApolloProvider>
-  );
+          <View
+            style={{
+              backgroundColor: isDarkMode ? Colors.lighter : Colors.white,
+            }}>
+            <FlatListComponent data={data} />
+          </View>
+          {/* </ScrollView> */}
+        </SafeAreaView>
+      </ApolloProvider>
+    );
+  }
 };
-
 const styles = StyleSheet.create({
   // sectionContainer: {
   //   marginTop: 32,

@@ -22,7 +22,7 @@ export const FlatListComponent: React.FC<{data: any}> = ({data}) => {
   //   const {data}: any = useQuery(GET_JOBS);
   const sub = data;
 
-  //   console.log(data?.jobs);
+    console.log(data);
 
   return (
     <FlatList

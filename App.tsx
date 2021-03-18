@@ -61,8 +61,6 @@ import {FlatListComponent} from './src/components/flatlist';
 // };
 
 const App = () => {
-  
-
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>([]);
   const [error, setError] = useState(null);
@@ -81,20 +79,18 @@ const App = () => {
         query: gql`
           query jobs {
             jobs {
-              locationNames
+              id
+              title
             }
           }
         `,
       })
-      .then(response => response)
-      .then(response:Article => {
-        console.log(response?.jobs);
-        setData(response);
-
-        // ADD THIS
+      .then<any>(response => response)
+      .then(response => {
+        setData(response?.data.jobs);
         setFullData(response);
-
         setIsLoading(false);
+        // console.log(data);
       })
       .catch(err => {
         setIsLoading(false);
@@ -120,7 +116,7 @@ const App = () => {
   //   );
   // ));
 
-  const isDarkMode = useColorScheme() === 'dZark';
+  const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.lighter : Colors.lighter,
@@ -139,7 +135,7 @@ const App = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.lighter : Colors.white,
           }}>
-          <FlatListComponent />
+          <FlatListComponent data={data} />
         </View>
         {/* </ScrollView> */}
       </SafeAreaView>

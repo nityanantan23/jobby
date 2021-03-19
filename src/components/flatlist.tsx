@@ -1,6 +1,5 @@
-import {gql, useQuery} from '@apollo/client';
 import React from 'react';
-import {StyleSheet, Text, View, FlatList, Image, TextInput} from 'react-native';
+import {StyleSheet, Text, View, FlatList, Image} from 'react-native';
 
 
 const sample: any = [
@@ -10,33 +9,34 @@ const sample: any = [
   {id: '4', title: 'Fourth item'},
 ];
 
-
-export const FlatListComponent: React.FC<{data: any,renderHeader:any}> = ({data,renderHeader}) => {
-  //   const GET_JOBS = gql`
-  //     query jobs {
-  //       jobs {
-  //         id
-  //         title
-  //       }
-  //     }
-  //   `;
-
-  //   const {data}: any = useQuery(GET_JOBS);
+export const FlatListComponent: React.FC<{data: any}> = ({data}) => {
   const sub = data;
 
   console.log(data);
 
   return (
     <FlatList
-      ListHeaderComponent={renderHeader}
       nestedScrollEnabled
       data={sub}
       keyExtractor={item => item.id}
       renderItem={({item}) => (
         <View style={styles.listItem}>
-          <Image source={{uri: item.title}} style={styles.coverImage} />
+          <Image
+            source={{
+              uri: `https://logo.clearbit.com/${item.company?.websiteUrl}`,
+            }}
+            style={styles.coverImage}
+          />
           <View style={styles.metaInfo}>
             <Text style={styles.title}>{`${item?.title}`}</Text>
+            <Text
+              style={
+                styles.title
+              }>{`${item?.cities[0]?.name}, ${item?.cities[0]?.country?.name} `}</Text>
+              {/* <Flag code="de" asSquare={true}  /> */}
+
+              {/* <Flag code={item?.cities[0]?.country?.isoCode}  /> */}
+
           </View>
         </View>
       )}

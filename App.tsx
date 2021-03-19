@@ -7,7 +7,7 @@
  *
  * @format
  */
- import {
+import {
   ApolloClient,
   InMemoryCache,
   gql,
@@ -33,42 +33,21 @@ import {Colors, ReloadInstructions} from 'react-native/Libraries/NewAppScreen';
 
 import {FlatListComponent} from './src/components/flatlist';
 
-// const Section: React.FC<{
-//   title: string;
-// }> = ({children, title}) => {
-//   const isDarkMode = useColorScheme() === 'dark';
-//   return (
-//     <View style={styles.sectionContainer}>
-//       <Text
-//         style={[
-//           styles.sectionTitle,
-//           {
-//             color: isDarkMode ? Colors.white : Colors.black,
-//           },
-//         ]}>
-//         {title}
-//       </Text>
-//       <Text
-//         style={[
-//           styles.sectionDescription,
-//           {
-//             color: isDarkMode ? Colors.light : Colors.dark,
-//           },
-//         ]}>
-//         {children}
-//       </Text>
-//     </View>
-//   );
-// };
+import {
+  QUERY_LOCATION,
+  QUERY_CITY,
+  QUERY_JOBS,
+} from './src/components/query/query';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>([]);
   const [error, setError] = useState(null);
   const [fullData, setFullData] = useState<any>([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState<any>('');
+  const [query, setQuery] = useState<any>('');
 
-  function renderHeader() {
+  const querylocation = function renderHeader() {
     return (
       <View
         style={{
@@ -81,14 +60,14 @@ const App = () => {
           autoCapitalize="none"
           autoCorrect={false}
           clearButtonMode="always"
-          // value={search}
+          value={search}
           onChangeText={queryText => setSearch(queryText)}
           placeholder="Search"
           style={{backgroundColor: '#000', paddingHorizontal: 20}}
         />
       </View>
     );
-  }
+  };
 
   const client = new ApolloClient({
     uri: 'https://api.graphql.jobs/graphql',
@@ -98,29 +77,83 @@ const App = () => {
   useEffect(() => {
     setIsLoading(true);
 
-    client
-      .query({
-        query: gql`
-          query jobs {
-            jobs {
-              id
-              title
+    if (search === '' || search === null) {
+      client
+        .query({
+          query: gql`
+            query jobs {
+              jobs {
+                id
+                title
+                slug
+                company {
+                  websiteUrl
+                }
+                cities {
+                  name
+                  country {
+                    name
+                  }
+                }
+                countries {
+                  name
+                }
+              }
             }
-          }
-        `,
-      })
-      .then<any>(response => response)
-      .then(response => {
-        setData(response?.data.jobs);
-        setFullData(response?.data.jobs);
-        setIsLoading(false);
-        // console.log(data);
-      })
-      .catch(err => {
-        setIsLoading(false);
-        setError(err);
-      });
-  }, []);
+          `,
+        })
+        .then<any>((response: any) => response)
+        .then((response: {data: {jobs: any}}) => {
+          setData(response?.data.jobs);
+          setFullData(response?.data.jobs);
+          setIsLoading(false);
+        })
+        .catch((err: any) => {
+          setIsLoading(false);
+          setError(err);
+        });
+    } else {
+      client
+        .query({
+          query: QUERY_LOCATION,
+          variables: {
+            input: {
+              value: search,
+            },
+          },
+        })
+        .then<any>(
+          (response: {data: {locations: {slug: any; type: any}[]}}) => {
+            client
+              .query({
+                query: QUERY_JOBS,
+                variables: {
+                  input: {
+                    type: response?.data.locations[0].type,
+                    slug: response?.data.locations[0].slug,
+                  },
+                },
+              })
+              .then((response: {data: {jobs: any}}) => {
+                setData(response?.data.jobs);
+                setIsLoading(false);
+                if (data == null || data == []) {
+                  setError(data);
+                }
+              });
+          },
+        )
+
+        .catch((err: React.SetStateAction<null>) => {
+          setIsLoading(false);
+          setError(err);
+        });
+    }
+  }, [search]);
+
+  console.log(data);
+
+  // {variables":{"input":{"slug":"berlin"}},
 
   //   const sample = client.query({
   //     query: gql`
@@ -162,7 +195,7 @@ const App = () => {
 
   if (error) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:Colors.lighter}}>
         <Text style={{fontSize: 18}}>
           Error fetching data... Check your network connection!
         </Text>
@@ -182,7 +215,26 @@ const App = () => {
             style={{
               backgroundColor: isDarkMode ? Colors.lighter : Colors.white,
             }}>
-            <FlatListComponent data={data} renderHeader={renderHeader} />
+            <View
+              style={{
+                backgroundColor: '#fff',
+                padding: 10,
+                marginVertical: 10,
+                borderRadius: 20,
+              }}>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                clearButtonMode="always"
+                value={search}
+                // onChangeText={queryText => setQuery(queryText)}
+
+                onChangeText={queryText => setSearch(queryText)}
+                placeholder="Search"
+                style={{backgroundColor: '#000', paddingHorizontal: 20}}
+              />
+            </View>
+            <FlatListComponent data={data} />
           </View>
           {/* </ScrollView> */}
         </SafeAreaView>

@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, FlatList, Image} from 'react-native';
 
-
 const sample: any = [
   {id: '1', title: 'First item'},
   {id: '2', title: 'Second item'},
@@ -17,6 +16,7 @@ export const FlatListComponent: React.FC<{data: any}> = ({data}) => {
   return (
     <FlatList
       nestedScrollEnabled
+      contentContainerStyle={{paddingBottom: 370}}
       data={sub}
       keyExtractor={item => item.id}
       renderItem={({item}) => (
@@ -33,10 +33,9 @@ export const FlatListComponent: React.FC<{data: any}> = ({data}) => {
               style={
                 styles.title
               }>{`${item?.cities[0]?.name}, ${item?.cities[0]?.country?.name} `}</Text>
-              {/* <Flag code="de" asSquare={true}  /> */}
+            {/* <Flag code="de" asSquare={true}  /> */}
 
-              {/* <Flag code={item?.cities[0]?.country?.isoCode}  /> */}
-
+            {/* <Flag code={item?.cities[0]?.country?.isoCode}  /> */}
           </View>
         </View>
       )}

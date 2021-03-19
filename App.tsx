@@ -42,12 +42,12 @@ import {
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>([]);
-  const [error, setError] = useState(null);
+  const [notfound, setnotfound] = useState(false);
   const [fullData, setFullData] = useState<any>([]);
   const [search, setSearch] = useState<any>('');
   const [query, setQuery] = useState<any>('');
 
-  const querylocation = function renderHeader() {
+  function renderHeader() {
     return (
       <View
         style={{
@@ -67,7 +67,7 @@ const App = () => {
         />
       </View>
     );
-  };
+  }
 
   const client = new ApolloClient({
     uri: 'https://api.graphql.jobs/graphql',
@@ -107,10 +107,12 @@ const App = () => {
           setData(response?.data.jobs);
           setFullData(response?.data.jobs);
           setIsLoading(false);
+          setnotfound(false)
+
         })
         .catch((err: any) => {
           setIsLoading(false);
-          setError(err);
+          setnotfound(true)
         });
     } else {
       client
@@ -137,83 +139,123 @@ const App = () => {
               .then((response: {data: {jobs: any}}) => {
                 setData(response?.data.jobs);
                 setIsLoading(false);
-                if (data == null || data == []) {
-                  setError(data);
-                }
+                setnotfound(false)
+
               });
           },
         )
 
         .catch((err: React.SetStateAction<null>) => {
           setIsLoading(false);
-          setError(err);
+          setnotfound(true)
         });
     }
   }, [search]);
 
   console.log(data);
 
-  // {variables":{"input":{"slug":"berlin"}},
-
-  //   const sample = client.query({
-  //     query: gql`
-  //       query jobs {
-  //         jobs {
-  //           locationNames
-  //         }
-  //       }
-  //     `,
-  //   });
-
-  //   setData(sample?)
-  //   .then(result => setData(result.results
-  //         setFullData(response.results);
-  //           setIsLoading(false);
-
-  //   );
-  // ));
-
-  const isDarkMode = useColorScheme() === 'dark';
-
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.lighter : Colors.lighter,
+    backgroundColor: Colors.lighter,
   };
 
   if (isLoading) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: Colors.white,
-        }}>
-        <ActivityIndicator size="large" color="#5500dc" />
-      </View>
+      <ApolloProvider client={client}>
+        <SafeAreaView style={backgroundStyle}>
+          <StatusBar barStyle={'light-content'} />
+          <Text style={styles.text}>Search Jobs</Text>
+          <View
+            style={{
+              backgroundColor: Colors.lighter,
+            }}>
+            <View
+              style={{
+                backgroundColor: Colors.white,
+                padding: 10,
+                marginVertical: 10,
+                borderRadius: 20,
+              }}>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                clearButtonMode="always"
+                value={search}
+                // onChangeText={queryText => setQuery(queryText)}
+                placeholderTextColor="#000"
+                onChangeText={queryText => setSearch(queryText)}
+                placeholder="Search"
+                style={styles.textInputStyle}
+              />
+            </View>
+            <View
+              style={{
+                height: 700,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: Colors.lighter,
+              }}>
+              <ActivityIndicator
+                size="large"
+                color="#5500dc"
+                style={{marginBottom: 300}}
+              />
+            </View>
+          </View>
+        </SafeAreaView>
+      </ApolloProvider>
     );
-  }
-
-  if (error) {
+  } else if (notfound) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:Colors.lighter}}>
-        <Text style={{fontSize: 18}}>
-          Error fetching data... Check your network connection!
-        </Text>
-      </View>
+      <ApolloProvider client={client}>
+        <SafeAreaView style={backgroundStyle}>
+          <StatusBar barStyle={'light-content'} />
+          <Text style={styles.text}>Search Jobs</Text>
+          <View
+            style={{
+              backgroundColor: Colors.lighter,
+            }}>
+            <View
+              style={{
+                backgroundColor: Colors.white,
+                padding: 10,
+                marginVertical: 10,
+                borderRadius: 20,
+              }}>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                clearButtonMode="always"
+                value={search}
+                // onChangeText={queryText => setQuery(queryText)}
+                placeholderTextColor="#000"
+                onChangeText={queryText => setSearch(queryText)}
+                placeholder="Search"
+                style={styles.textInputStyle}
+              />
+            </View>
+            <View
+              style={{
+                height: 700,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: Colors.lighter,
+              }}>
+              <Text style={{fontSize: 18}}>No searched data found!</Text>
+            </View>
+          </View>
+        </SafeAreaView>
+      </ApolloProvider>
     );
   } else {
     return (
       <ApolloProvider client={client}>
         <SafeAreaView style={backgroundStyle}>
-          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-          <Text style={styles.text}>Favorite Contacts</Text>
+          <StatusBar barStyle={'light-content'} />
+          <Text style={styles.text}>Search Jobs</Text>
 
-          {/* <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={backgroundStyle}> */}
           <View
             style={{
-              backgroundColor: isDarkMode ? Colors.lighter : Colors.white,
+              backgroundColor: Colors.lighter,
             }}>
             <View
               style={{
@@ -231,12 +273,12 @@ const App = () => {
 
                 onChangeText={queryText => setSearch(queryText)}
                 placeholder="Search"
-                style={{backgroundColor: '#000', paddingHorizontal: 20}}
+                placeholderTextColor="#000"
+                style={styles.textInputStyle}
               />
             </View>
             <FlatListComponent data={data} />
           </View>
-          {/* </ScrollView> */}
         </SafeAreaView>
       </ApolloProvider>
     );
@@ -244,22 +286,6 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  // sectionContainer: {
-  //   marginTop: 32,
-  //   paddingHorizontal: 24,
-  // },
-  // sectionTitle: {
-  //   fontSize: 24,
-  //   fontWeight: '600',
-  // },
-  // sectionDescription: {
-  //   marginTop: 8,
-  //   fontSize: 18,
-  //   fontWeight: '400',
-  // },
-  // highlight: {
-  //   fontWeight: '700',
-  // },
   text: {
     fontSize: 20,
     color: '#101010',
@@ -287,6 +313,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     width: 200,
     padding: 10,
+  },
+  textInputStyle: {
+    color: 'green',
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
   },
 });
 

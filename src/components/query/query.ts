@@ -31,8 +31,10 @@ export const QUERY_JOBS_FIRST = gql`
     jobs {
       id
       title
+      slug
       company {
         websiteUrl
+        slug
       }
       cities {
         name
@@ -236,3 +238,7 @@ export const QUERY_JOBS_DETAILS = gql`
     __typename
   }
 `;
+
+
+
+

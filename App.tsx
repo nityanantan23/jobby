@@ -19,7 +19,10 @@ const App = () => {
   });
 
   return (
-    <Routes />
+    <ApolloProvider client={client}>
+      <Routes />
+    </ApolloProvider>
+
     // <ApolloProvider client={client}>
     //    <Search  />
     //  </ApolloProvider>

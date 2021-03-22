@@ -26,13 +26,10 @@ export const FlatListComponent: React.FC<{
   getSearch: string;
   navigation: any;
 }> = ({getSearch, navigation}) => {
-  // console.log('🚀 ~ file: flatlist.tsx ~ line 32 ~ navigation', navigation);
-
   const client = new ApolloClient({
     uri: 'https://api.graphql.jobs/graphql',
     cache: new InMemoryCache(),
   });
-  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any[]>(
     useQuery(QUERY_JOBS_FIRST).data?.jobs,
   );
@@ -45,7 +42,6 @@ export const FlatListComponent: React.FC<{
       },
     },
   });
-  console.log('🚀 ~ file: flatlist.tsx ~ line 19 ~ data', data);
 
   const {loading, error, data: jobs} =
     search === '' || search === null
@@ -60,18 +56,14 @@ export const FlatListComponent: React.FC<{
         });
 
   useEffect(() => {
-    setIsLoading(true);
-
     setSearch(getSearch);
 
     if (jobs?.jobs) {
-      setIsLoading(false);
-
       setData(jobs?.jobs);
     }
   }, [getSearch, jobs]);
 
-  if (isLoading)
+  if (loading)
     return (
       <ApolloProvider client={client}>
         <SafeAreaView style={backgroundStyle}>
@@ -101,7 +93,6 @@ export const FlatListComponent: React.FC<{
   if (jobs == [])
     return <Text style={{fontSize: 18}}>No searched data found!</Text>;
   if (error) return <Text style={{fontSize: 18}}>{error}</Text>;
-
   return (
     <FlatList
       nestedScrollEnabled
@@ -112,7 +103,8 @@ export const FlatListComponent: React.FC<{
         <TouchableWithoutFeedback
           onPress={() =>
             navigation?.navigation.navigation.navigate('Details', {
-              otherParam: item,
+              jobSlug: item.slug,
+              companySlug: item?.company?.slug,
             })
           }>
           <View style={styles.listItem}>

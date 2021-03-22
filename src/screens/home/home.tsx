@@ -7,12 +7,13 @@
  *
  * @format
  */
+import 'react-native-gesture-handler';
+
 import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 import React, {useState} from 'react';
-import Search from './src/components/search/search';
-import Routes from './src/navigate';
+import Search from '../../components/search/search';
 
-const App = () => {
+const Home = (navigation:any) => {
   const client = new ApolloClient({
     uri: 'https://api.graphql.jobs/graphql',
     cache: new InMemoryCache(),
@@ -20,13 +21,9 @@ const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <Routes />
+      <Search navigation={navigation}/>
     </ApolloProvider>
-
-    // <ApolloProvider client={client}>
-    //    <Search  />
-    //  </ApolloProvider>
   );
 };
 
-export default App;
+export default Home;

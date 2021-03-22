@@ -31,7 +31,6 @@ export const QUERY_JOBS_FIRST = gql`
     jobs {
       id
       title
-      slug
       company {
         websiteUrl
       }

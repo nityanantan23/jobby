@@ -5,7 +5,9 @@ import {FlatListComponent} from '../flatlist/flatlist';
 import {styles} from '../search/styles';
 import {backgroundStyle} from './styles';
 
-const Search: React.FC = () => {
+const Search: React.FC<{
+  navigation: any;
+}> = (navigation: any) => {
   const [search, setSearch] = useState<any>('');
 
   return (
@@ -35,7 +37,7 @@ const Search: React.FC = () => {
           />
         </View>
 
-        <FlatListComponent getSearch={search} />
+        <FlatListComponent getSearch={search} navigation={navigation} />
 
         <View
           style={{

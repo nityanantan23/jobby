@@ -22,9 +22,12 @@ import search from '../search/search';
 import {backgroundStyle} from '../search/styles';
 import {styles} from './styles';
 
-export const FlatListComponent: React.FC<{getSearch: string}> = ({
-  getSearch,
-}) => {
+export const FlatListComponent: React.FC<{
+  getSearch: string;
+  navigation: any;
+}> = ({getSearch, navigation}) => {
+  // console.log('🚀 ~ file: flatlist.tsx ~ line 32 ~ navigation', navigation);
+
   const client = new ApolloClient({
     uri: 'https://api.graphql.jobs/graphql',
     cache: new InMemoryCache(),
@@ -33,7 +36,6 @@ export const FlatListComponent: React.FC<{getSearch: string}> = ({
   const [data, setData] = useState<any[]>(
     useQuery(QUERY_JOBS_FIRST).data?.jobs,
   );
-  console.log('🚀 ~ file: flatlist.tsx ~ line 19 ~ data', data);
   const [search, setSearch] = useState<any>(getSearch);
 
   const {data: location} = useQuery(QUERY_LOCATION, {
@@ -43,6 +45,7 @@ export const FlatListComponent: React.FC<{getSearch: string}> = ({
       },
     },
   });
+  console.log('🚀 ~ file: flatlist.tsx ~ line 19 ~ data', data);
 
   const {loading, error, data: jobs} =
     search === '' || search === null
@@ -99,8 +102,6 @@ export const FlatListComponent: React.FC<{getSearch: string}> = ({
     return <Text style={{fontSize: 18}}>No searched data found!</Text>;
   if (error) return <Text style={{fontSize: 18}}>{error}</Text>;
 
-
-
   return (
     <FlatList
       nestedScrollEnabled
@@ -108,7 +109,12 @@ export const FlatListComponent: React.FC<{getSearch: string}> = ({
       data={data}
       keyExtractor={item => item.id}
       renderItem={({item}) => (
-        <TouchableWithoutFeedback onPress={() => actionOnRow(item)}>
+        <TouchableWithoutFeedback
+          onPress={() =>
+            navigation?.navigation.navigation.navigate('Details', {
+              otherParam: item,
+            })
+          }>
           <View style={styles.listItem}>
             <Image
               source={{
@@ -128,8 +134,4 @@ export const FlatListComponent: React.FC<{getSearch: string}> = ({
       )}
     />
   );
-};
-
-const actionOnRow = (item: any) => {
-  console.log('Selected Item :', item.title);
 };

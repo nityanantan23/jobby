@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import {
   ActivityIndicator,
+  Button,
   Dimensions,
   Image,
   ScrollView,
   Text,
   View,
+  Linking,
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {
@@ -15,6 +17,7 @@ import {
   useQuery,
 } from '@apollo/client';
 import {QUERY_JOBS_DETAILS} from '../../components/query/query';
+import {OpenURLButton} from '../../components/button/button';
 const {width, height} = Dimensions.get('window');
 
 export interface DetailsProps {}
@@ -76,7 +79,7 @@ const Details: React.FC<DetailsProps> = (route: any) => {
               }}>
               <Image
                 style={{width: width - 200, height: height / 4}}
-                borderRadius={100000}                
+                borderRadius={30}
                 source={{
                   uri: `https://logo.clearbit.com/${data?.job?.company?.websiteUrl}`,
                 }}
@@ -105,7 +108,10 @@ const Details: React.FC<DetailsProps> = (route: any) => {
                   property={data?.job?.cities[0].__typename}
                   quality={data?.job?.cities[0].name}
                 />
-                <DetailBox property={'Price'} quality={'$12'} />
+                <DetailBox
+                  property={data?.job?.company.__typename}
+                  quality={data?.job?.company.name}
+                />
               </View>
             </View>
             <View style={{marginHorizontal: 20}}>
@@ -143,7 +149,11 @@ const Details: React.FC<DetailsProps> = (route: any) => {
               <Text style={{fontSize: 16, color: 'black', marginTop: 10}}>
                 {data?.job?.description}
               </Text>
-
+              <View style={{margin: 10,marginBottom:30}}>
+                <OpenURLButton url={data?.job?.applyUrl}>
+                  Apply Job
+                </OpenURLButton>
+              </View>
               <View>
                 <View
                   style={{
